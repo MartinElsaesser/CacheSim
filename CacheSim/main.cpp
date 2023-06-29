@@ -55,7 +55,8 @@ int main(int argc, char *argv[]) {
         ("m,miss",   "Write miss Policy [allocate|noAllocate]    ",        cxxopts::value<std::string>()->default_value("allocate"));
     options.add_options("simulator")
 		("h,help",  "Print help screen")
-        ("t,trace", "Path to trace file", cxxopts::value<std::string>());
+		("o,output","Path to output file [string]", cxxopts::value<std::string>()->default_value(""))
+        ("t,trace", "Path to trace file [string]", cxxopts::value<std::string>());
 
     // parse arguments
     cxxopts::ParseResult result;
@@ -81,6 +82,7 @@ int main(int argc, char *argv[]) {
     WriteHitPolicy writeHitPolicy = writeBack;
     WriteMissPolicy writeMissPolicy = allocate;
     std::string trace = "";
+    std::string output = "";
 
     std::string evict = "";
 	std::string hit = "";
@@ -94,6 +96,7 @@ int main(int argc, char *argv[]) {
         hit = result["hit"].as<std::string>();
         miss = result["miss"].as<std::string>();
         trace = result["trace"].as<std::string>();
+        output = result["output"].as<std::string>();
 
         if (evict == "LRU") {
             evictionPolicy = LRU;
@@ -138,7 +141,7 @@ int main(int argc, char *argv[]) {
         return EXIT_FAILURE;
     }
 
-    
+
 
     // main functionality
     try
@@ -152,27 +155,43 @@ int main(int argc, char *argv[]) {
 		traceFile.open(trace);
         
 
-		std::string line;
-		if (traceFile.is_open()) {
-			while (traceFile) {
-				std::getline(traceFile, line);
-                if (line.length() < 13) continue;
-                std::string operation = line.substr(2, 1);
-                unsigned int address = std::stoul(line.substr(4, 8), 0, 16);
-
-                if (operation == "0") {
-                    controller.read(address);
-                }
-                if (operation == "1") {
-                    controller.write(address);
-                }
-			}
-            std::cout << controller.printResults();
-		}
-		else {
+        if (!traceFile.is_open()) {
             std::string error = std::format("Couldn't open file '{}'. Check if it exists and the path to the file is correct.", trace);
             throw std::runtime_error(error);
+        }
+
+		while (traceFile) {
+		std::string line;
+			std::getline(traceFile, line);
+			if (line.length() < 12) continue;
+			std::string operation = line.substr(2, 1);
+			unsigned int address = std::stoul(line.substr(4, 8), 0, 16);
+
+			if (operation == "0") {
+				controller.read(address);
+			}
+			if (operation == "1") {
+				controller.write(address);
+			}
 		}
+        traceFile.close();
+
+		// output
+		std::cout << controller.printResults();
+        if (output == "") {
+            return 0;
+        }
+
+		std::ofstream outputFile;
+		outputFile.open(output);
+
+		if (!outputFile.is_open()) {
+			std::string error = std::format("Couldn't open file '{}'. Check if it exists and the path to the file is correct.", output);
+			throw std::runtime_error(error);
+		}
+        outputFile << controller.printResults();
+        outputFile.close();
+
 
     }
     catch (const std::exception& e)

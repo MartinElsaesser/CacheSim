@@ -64,11 +64,11 @@ public:
 		std::string s;
 
 		// go through sets
-		for(unsigned int setIdx = 0; setIdx<this->sets_count; setIdx++){
+		for(unsigned int setIdx = 0; setIdx < this->sets_count; setIdx++){
 			s += "[\n";
 			s += std::format("  full: {}, nextIndexToWriteTo: {} \n", this->sets_areFull[setIdx], this->sets_nextWriteIdx[setIdx]);
 			// go through cache cells
-			for(unsigned int cell = 0; cell<associativity; cell++){
+			for(unsigned int cell = 0; cell < this->associativity; cell++){
 				Cell cellElement = *(this->sets_array[setIdx][cell]);
 				s += std::format("  {{ tag: {}, valid: {}, dirty: {} }}\n", cellElement.tag, cellElement.valid, cellElement.dirty);
 			}
