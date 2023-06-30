@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 3.18.0)
 project(CacheSim VERSION 0.1.0)
 
-
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_BUILD_TYPE Release)
 
 set(dirs											# dirs to compile
 	src
