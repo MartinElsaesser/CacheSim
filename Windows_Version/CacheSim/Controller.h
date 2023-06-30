@@ -8,20 +8,6 @@
 #include <cmath>
 #include "Cache.h"
 
-/***************************************************************
-******************   DELETE (only to DEBUG) ********************
-****************************************************************/
-typedef struct Operation {
-	std::string type;
-	unsigned int address;
-} Operation;
-Operation lastOP = {"", 0};
-/***************************************************************
-********   DELETE block end, do not delete any further *********
-****************************************************************/
-
-
-
 // TODO: testing
 // TODO: deiffernce write through, write back
 enum WriteHitPolicy { writeThrough, writeBack };
@@ -87,16 +73,6 @@ public:
 		delete this->cache;
 	}
 	void read(unsigned int address) {
-		/***************************************************************
-		******************   DELETE (only to DEBUG) ********************
-		****************************************************************/
-		lastOP.type = "read";
-		lastOP.address = address;
-		/***************************************************************
-		********   DELETE block end, do not delete any further *********
-		****************************************************************/
-
-
 		deconstructedAddress a = this->deconstructAddress(address);
 
 		// HIT
@@ -120,17 +96,6 @@ public:
 	}
 
 	void write(unsigned int address) {
-		/***************************************************************
-		******************   DELETE (only to DEBUG) ********************
-		****************************************************************/
-		lastOP.type = "write";
-		lastOP.address = address;
-		/***************************************************************
-		********   DELETE block end, do not delete any further *********
-		****************************************************************/
-
-
-
 		deconstructedAddress a = this->deconstructAddress(address);
 
 		try
@@ -156,17 +121,6 @@ public:
 	std::string printResults() {
 		return std::format("Results:\n  misses: {}\n  hits: {}\n  evictions: {}", this->misses, this->hits, this->evictions);
 	}
-
-
-	/***************************************************************
-	******************   DELETE (only to DEBUG) ********************
-	****************************************************************/
-	void debugPrint() {// TODO:remove
-		std::cout << std::format("Cache (hits: {}, misses: {}, evictions: {}, {}: ({})):\n", this->hits, this->misses, this->evictions, lastOP.type, lastOP.address) << this->cache << "\n\n";
-	}
-	/***************************************************************
-	********   DELETE block end, do not delete any further *********
-	****************************************************************/
 
 private:
 	typedef struct deconstructedAddress {
