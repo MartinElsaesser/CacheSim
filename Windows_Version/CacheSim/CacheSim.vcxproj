@@ -154,6 +154,7 @@
     <Object Include="x64\Debug\main.obj" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Cache.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
