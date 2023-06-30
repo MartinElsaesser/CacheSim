@@ -1,63 +1,37 @@
-# Notes
-+ cxxopts is already included as a way to read console flags
-	+ src: https://github.com/jarro2783/cxxopts/tree/master
-	+ example (up to date): https://github.com/jarro2783/cxxopts/blob/master/src/example.cpp
-	+ example (little outdated): https://medium.com/@mostsignificant/3-ways-to-parse-command-line-arguments-in-c-quick-do-it-yourself-or-comprehensive-36913284460f#6265
+# Cache Simulator Project
+## Build Folders
+There is a Linux_Version and a Windows_Version folder for building the project.  
+The project needs C++20 to run, for a linux build this requires gcc/g++ version 13.  
+The CacheSim.exe is already a finished windows build file, ready to be executed.
 
-# Todos
-## Controller.cpp
-+ Delete debug functionality when project is finished (parts to delete are marked)
-## main.cpp
-1. Read parameters from console interface (spec following)
-	+ Flags
-		+ cell count  			(-c | --cellCount) 			[unsigned int]
-		+ block count 			(-b | --blockCount) 		[unsigned int]
-		+ associativity 		(-a | --associativity) 	[unsigned int]
-		+ eviction policy 	(-e | --evict) 	[string] LRU|fifo|random
-		+ write hit policy 	(-w | --hit) 		[string] writeBack|writeThrough
-		+ write miss policy	(-m | --miss) 	[string] allocate|noAllocate
-		+ trace file path   (-t | --trace)	[string]
-		+ help screen 		(-h | --help)
-	+ help screen
-		+ help screen should list out all required parameters (if no default values are defined, all flags are needed)
-		+ maybe give some examples of how it is to be used
-		+ if defaults are present, tell the user about them
-		+ if flags have a short and a long form, list both
-		+ list expected data to a flag
-	+ take parameters
-		+ check if -h was included, go to help screen
-		+ check if all arguments are present / or have default values for some?
-		+ if error was throw, hint that there is a help screen (errors are thrown in controller, on creation and when read() and write() are called)
-2. Initialize Controller based on parameters
-3. Read trace file from provided trace file path 
-	+ loop through lines and execute either controller.write(addres) or controller.read(address)
-4. Output hits, misses and cache evictions
-	+ hits, missed and evictions are currently private on Controller, so a extra output function is needed
-```Javascript
-// javascript pseudoCode
-
-// wrap line below in try catch, and show thrown error, maybe goto help screen
-{cellCount, blockCount, associativity, eviction, writeHit, writeMiss, path, help} = read_parameters()
-
-if(help) return printHelpScreen();
-trace = readFile(path);
-
-try {
-	controller = Controller(cellCount, blockCount, associativity, eviction, writeHit, writeMiss);
-	for(line in trace) {
-		if(line.type == read) {
-			controller.read(line.address)
-		}
-		if(line.type == write) {
-			controller.write(line.address)
-		}
-	}
-	controller.outputResults()
-} catch(error) {
-	console.log(error)
-	printHelpScreen();
-}
-
+## Running the project
+Open a terminal an cd into where the compiled CacheSim  executable lies.  
+For a quick start run
+```cmd
+CacheSim.exe -t <path-to-trace->
 ```
-## optional testing
-+ see if it works as intended For reference: https://courses.cs.washington.edu/courses/cse351/cachesim/
+If there was a art.trace file within the folder traces, you would need to run
+```cmd
+CacheSim.exe -t ./traces/art.trace
+```
+
+Normally the CacheSim runs on default values, if you want to change them, use the following options  
+cache options:  
+	-c, --cellCount arg      Number of cache cells in cache     [uint]   (default: 1024)  
+	-b, --blockSize arg      Number of bytes a cache cell holds [uint]   (default: 16)  
+	-a, --associativity arg  Cache associativity                [uint]   (default: 1)  
+	-e, --evict arg          Evicton Policy    [LRU|fifo|random]         (default: LRU)  
+	-w, --hit arg            Write hit Policy  [writeBack|writeThrough]  (default: writeBack)  
+	-m, --miss arg           Write miss Policy [allocate|noAllocate]     (default: allocate)  
+
+simulator options:  
+	-h, --help        Print help screen  
+	-o, --output arg  Path to output file [string] (default: "")  
+	-t, --trace arg   Path to trace file  [string]  
+
+-t is the only needed argument
+
+Example:
+CacheSim.exe -t ./traces/art.trace -a 2 -c 16 --blockSize 2  
+Would result in 16 total cache cells all with 2 byte blocks. There would be 8 sets.  
+The cache would be 32 bytes in total
