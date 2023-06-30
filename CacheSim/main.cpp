@@ -16,30 +16,6 @@
 * writeHitPolicy: writeThrough|writeBack
 * writeMissPolicy allocate|noAllocate 
 */
-int main2(int argc, char *argv[])
-{
-    srand(time(NULL));
-
-    unsigned int cellCount = 4;
-    unsigned int blockSize = 2;
-    unsigned int associativity = 4;
-    EvictionPolicy evictionPolicy = LRU;
-    WriteHitPolicy writeHitPolicy = writeBack;
-    WriteMissPolicy writeMissPolicy = allocate;
-
-    Controller a = Controller(cellCount, blockSize, associativity, evictionPolicy, writeHitPolicy, writeMissPolicy);
-    
-    a.write(1);
-    a.debugPrint();
-
-    a.read(4);
-    a.debugPrint();
-
-    a.write(4);
-    a.debugPrint();
-   return 0;
-}
-
 
 int main(int argc, char *argv[]) {
     cxxopts::Options options("Cache Sim", "Simulates a cache with options to configure it");
@@ -56,7 +32,7 @@ int main(int argc, char *argv[]) {
     options.add_options("simulator")
 		("h,help",  "Print help screen")
 		("o,output","Path to output file [string]", cxxopts::value<std::string>()->default_value(""))
-        ("t,trace", "Path to trace file [string]", cxxopts::value<std::string>());
+        ("t,trace", "Path to trace file  [string]", cxxopts::value<std::string>());
 
     // parse arguments
     cxxopts::ParseResult result;
